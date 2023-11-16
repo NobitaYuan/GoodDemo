@@ -13,6 +13,9 @@
         "paths": {
             "@/*": ["./src/*"]
         },
+        /* element组件类型识别 */
+        "types": ["element-plus/global"],
+        
         // "moduleResolution": "node",
 
         /* Bundler mode */

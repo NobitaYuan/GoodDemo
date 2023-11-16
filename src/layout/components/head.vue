@@ -13,7 +13,7 @@ const value1 = ref(false)
 </script>
 
 <template>
-    <el-card body-style="padding:12px" class="card">
+    <el-card body-style="padding:12px;height:100%" class="card">
         <div class="head">
             <div class="title">{{ $router.currentRoute.value.meta.title }}</div>
             <div class="right">
@@ -31,13 +31,15 @@ const value1 = ref(false)
 </template>
 
 <style lang="less" scoped>
+.card{
+    height: 100%;
+}
 .head {
     display: flex;
     position: relative;
     justify-content: center;
     .title {
         font-size: 20px;
-        padding: 6px;
     }
     .right {
         position: absolute;
