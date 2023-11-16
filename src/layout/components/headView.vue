@@ -17,21 +17,14 @@ const value1 = ref(false)
         <div class="head">
             <div class="title">{{ $router.currentRoute.value.meta.title }}</div>
             <div class="right">
-                <el-switch
-                    style="--el-switch-on-color: #2c2c2c"
-                    v-model="value1"
-                    @click="toggleDark"
-                    inline-prompt
-                    :active-icon="Moon"
-                    :inactive-icon="Sunny"
-                />
+                <el-switch style="--el-switch-on-color: #2c2c2c" v-model="value1" @click="toggleDark" inline-prompt :active-icon="Moon" :inactive-icon="Sunny" />
             </div>
         </div>
     </el-card>
 </template>
 
 <style lang="less" scoped>
-.card{
+.card {
     height: 100%;
 }
 .head {

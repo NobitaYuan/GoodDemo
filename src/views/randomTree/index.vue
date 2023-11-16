@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue"
 
 const el = ref<HTMLCanvasElement | null>(null)
 
@@ -11,7 +11,7 @@ const dpr = window.devicePixelRatio
 
 const cvsSize = {
     width: 1200,
-    height: 800
+    height: 800,
 }
 
 // 保证canvas的清晰度
@@ -30,10 +30,10 @@ const init = () => {
     const startBranch = {
         start: {
             x: cvsSize.width / 2,
-            y: cvsSize.height
+            y: cvsSize.height,
         },
         length: 30,
-        angle: -Math.PI / 2
+        angle: -Math.PI / 2,
     }
 
     drawTree(startBranch)
@@ -41,7 +41,7 @@ const init = () => {
 }
 // point
 interface Point {
-    x: number,
+    x: number
     y: number
 }
 const lineTO = (start: Point, end: Point) => {
@@ -52,7 +52,7 @@ const lineTO = (start: Point, end: Point) => {
 }
 // branch
 interface Branch {
-    start: Point,
+    start: Point
     length: number
     // 角度
     angle: number
@@ -61,7 +61,7 @@ const getEndPoint = (line: Branch) => {
     const { start, length, angle } = line
     return {
         x: start.x + length * Math.cos(angle),
-        y: start.y + length * Math.sin(angle)
+        y: start.y + length * Math.sin(angle),
     }
 }
 // 画一个分支
@@ -74,22 +74,29 @@ const drawTree = (startBranch: Branch, depth = 0) => {
     const endPoint = getEndPoint(startBranch)
     drawBranch(startBranch)
     if (depth < 5 || Math.random() < 0.5) {
-        taskArr.push(() => drawTree({
-            start: endPoint,
-            length: startBranch.length + (Math.random() * 10 - 5),
-            angle: startBranch.angle - 0.3 * Math.random()
-        }, depth + 1))
-
+        taskArr.push(() =>
+            drawTree(
+                {
+                    start: endPoint,
+                    length: startBranch.length + (Math.random() * 10 - 5),
+                    angle: startBranch.angle - 0.3 * Math.random(),
+                },
+                depth + 1,
+            ),
+        )
     }
     if (depth < 5 || Math.random() < 0.5) {
         taskArr.push(() =>
-            drawTree({
-                start: endPoint,
-                length: startBranch.length + (Math.random() * 10 - 5),
-                angle: startBranch.angle + 0.3 * Math.random()
-            }, depth + 1))
+            drawTree(
+                {
+                    start: endPoint,
+                    length: startBranch.length + (Math.random() * 10 - 5),
+                    angle: startBranch.angle + 0.3 * Math.random(),
+                },
+                depth + 1,
+            ),
+        )
     }
-
 }
 // 画线的队列
 const taskArr: Function[] = []
@@ -114,7 +121,6 @@ const playFrame = () => {
 onMounted(() => {
     init()
 })
-
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router"
-
+import { errRouter } from "@/router/errRouter"
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -34,7 +34,8 @@ const router = createRouter({
             meta: {
                 title: "扫雷",
             },
-        }
+        },
+        ...errRouter,
     ],
 })
 

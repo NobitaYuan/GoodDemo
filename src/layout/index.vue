@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RouterView } from "vue-router"
 import sideBar from "./components/sideBar.vue"
-import headCom from "./components/head.vue"
+import headCom from "./components/headView.vue"
 </script>
 
 <template>
@@ -55,6 +55,7 @@ import headCom from "./components/head.vue"
             }
 
             .main {
+                position: relative;
                 border-radius: 4px;
                 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
                 padding: 8px;
@@ -68,6 +69,7 @@ import headCom from "./components/head.vue"
         }
     }
 }
+
 // 动画速度
 .animate__animated {
     --animate-duration: 0.6s;

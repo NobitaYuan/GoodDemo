@@ -95,7 +95,7 @@
     margin: 0;
     min-height: 100vh;
     font-family: "Libre Franklin", sans-serif;
-
+    position: relative;
     background-image: linear-gradient(0deg, #e8f4f8, lightblue);
     width: 100%;
 }
@@ -134,7 +134,9 @@
     height: 100px;
     border-radius: 50%;
     background-image: radial-gradient(circle at 50%, #ffffff 50%, #f5de19);
-    box-shadow: 0px 0px 40px #f5de19, inset 0px 0px 100px #f5de19;
+    box-shadow:
+        0px 0px 40px #f5de19,
+        inset 0px 0px 100px #f5de19;
     animation: sun 5s linear infinite;
 }
 
@@ -155,7 +157,9 @@
     background-color: #ffffff;
     background-image: radial-gradient(ellipse at 50%, transparent, #fcfcfc, #f7f7f7);
     filter: blur(3px);
-    animation: clouds 60s linear infinite, cloud 8s linear infinite;
+    animation:
+        clouds 60s linear infinite,
+        cloud 8s linear infinite;
 }
 
 .clouds div::before,
@@ -191,7 +195,9 @@
     height: 10px;
     background-color: #070000;
     clip-path: polygon(70% 59%, 100% 54%, 64% 68%, 48% 83%, 81% 86%, 55% 90%, 0 92%, 19% 76%, 0 60%, 33% 71%);
-    animation: birds 30s linear infinite, fly 1s linear infinite;
+    animation:
+        birds 30s linear infinite,
+        fly 1s linear infinite;
 }
 
 .sea {
@@ -415,27 +421,7 @@
     height: 10px;
     background-color: #44882d;
     background-image: linear-gradient(180deg, #44882d, #1e3b14);
-    clip-path: polygon(
-        10% 84%,
-        14% 73%,
-        17% 24%,
-        20% 61%,
-        22% 88%,
-        32% 15%,
-        31% 68%,
-        35% 88%,
-        49% 11%,
-        63% 85%,
-        69% 10%,
-        77% 80%,
-        84% 16%,
-        89% 92%,
-        97% 41%,
-        100% 97%,
-        50% 96%,
-        0 100%,
-        4% 34%
-    );
+    clip-path: polygon(10% 84%, 14% 73%, 17% 24%, 20% 61%, 22% 88%, 32% 15%, 31% 68%, 35% 88%, 49% 11%, 63% 85%, 69% 10%, 77% 80%, 84% 16%, 89% 92%, 97% 41%, 100% 97%, 50% 96%, 0 100%, 4% 34%);
     animation: grass_tw 2s linear infinite;
 }
 
@@ -452,7 +438,9 @@
 
 @keyframes sun {
     50% {
-        box-shadow: 0px 0px 60px 20px #f5de19, inset 0px 0px 100px #f5de19;
+        box-shadow:
+            0px 0px 60px 20px #f5de19,
+            inset 0px 0px 100px #f5de19;
     }
 }
 
@@ -563,27 +551,7 @@
 
 @keyframes grass_tw {
     50% {
-        clip-path: polygon(
-            10% 84%,
-            14% 73%,
-            10% 28%,
-            20% 61%,
-            22% 88%,
-            24% 18%,
-            31% 68%,
-            35% 88%,
-            42% 15%,
-            63% 85%,
-            58% 14%,
-            77% 80%,
-            77% 18%,
-            89% 92%,
-            91% 43%,
-            100% 97%,
-            50% 96%,
-            0 100%,
-            3% 39%
-        );
+        clip-path: polygon(10% 84%, 14% 73%, 10% 28%, 20% 61%, 22% 88%, 24% 18%, 31% 68%, 35% 88%, 42% 15%, 63% 85%, 58% 14%, 77% 80%, 77% 18%, 89% 92%, 91% 43%, 100% 97%, 50% 96%, 0 100%, 3% 39%);
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from "vue"
 
 // 是否开发模式
 const isDev = false
@@ -15,24 +15,19 @@ let isStart = false
 // 游戏是否结束
 let isGameOver = false
 
-
 interface BlockState {
     x: number // x坐标
-    y: number // y坐标 
-    revealed: boolean// 是否被翻开
+    y: number // y坐标
+    revealed: boolean // 是否被翻开
     mine: boolean // 是否是雷
     flagged: boolean // 是否被标记
-    adjacentMines: number   // 周围雷的数量
+    adjacentMines: number // 周围雷的数量
 }
 const state = ref<BlockState[][]>([[]])
-
 // 生成基本数据
 const generateData = () => {
     state.value = []
-    state.value = Array.from({ length: HEIGHT }, (_, y) =>
-        Array.from({ length: WIDTH },
-            (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })
-        ))
+    state.value = Array.from({ length: HEIGHT }, (_, y) => Array.from({ length: WIDTH }, (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })))
 }
 
 // 生成雷
@@ -67,13 +62,13 @@ const updateNumbers = () => {
 // 方向
 const direction = [
     [-1, -1], // 左上
-    [0, -1],  // 上
-    [1, -1],  // 右上
-    [-1, 0],  // 左
-    [1, 0],   // 右
-    [-1, 1],  // 左下
-    [0, 1],   // 下
-    [1, 1],   // 右下
+    [0, -1], // 上
+    [1, -1], // 右上
+    [-1, 0], // 左
+    [1, 0], // 右
+    [-1, 1], // 左下
+    [0, 1], // 下
+    [1, 1], // 右下
 ]
 // 获取周围雷的数量Fn
 const getAdjacentMines = (block: BlockState) => {
@@ -122,7 +117,7 @@ const reveal = (block: BlockState) => {
     if (block.mine) {
         revealAll()
         isGameOver = true
-        alert('Game Over')
+        alert("Game Over")
         return
     }
 
@@ -155,14 +150,16 @@ const checkGameStatus = () => {
     // 非雷的是否都翻开
     const isWin = arr.every((block) => block.revealed)
     // 雷的是否都标记
-    const isWin2 = state.value.flat().filter((block) => block.mine).every((block) => block.flagged)
+    const isWin2 = state.value
+        .flat()
+        .filter((block) => block.mine)
+        .every((block) => block.flagged)
     if (isWin || isWin2) {
         isGameOver = true
-        alert('You Win')
+        alert("You Win")
         revealAll()
     }
 }
-
 
 // 开始
 const init = () => {
@@ -171,7 +168,6 @@ const init = () => {
     mineCount = 0
     generateData()
 }
-
 
 onMounted(() => {
     init()
@@ -187,35 +183,32 @@ onMounted(() => {
                 <el-button class="header__button">Settings</el-button>
             </div>
         </div>
-        <div class="content flex-1  flex items-center">
+        <div class="content flex-1 flex items-center">
             <!-- {{ state }} -->
             <div class="content_field flex flex-col">
                 <div class="row flex" v-for="(row, index) in state" :key="index">
-                    <div class="col" v-for="(block, idx) in row" :key="idx" @click="reveal(block)"
-                        @contextmenu.prevent="flagFn(block)">
-
+                    <div class="col" v-for="(block, idx) in row" :key="idx" @click="reveal(block)" @contextmenu.prevent="flagFn(block)">
                         <!-- 未翻面 -->
                         <template v-if="!block.revealed">
                             <div class="mask">
                                 <template v-if="isDev">
-                                    {{ block.mine ? '💣' : block.adjacentMines }}
+                                    {{ block.mine ? "💣" : block.adjacentMines }}
                                 </template>
                             </div>
                         </template>
                         <!-- 翻面 -->
                         <template v-else>
-                            <div class="self">{{ block.mine ? '💣' : block.adjacentMines }}</div>
+                            <div class="self">{{ block.mine ? "💣" : block.adjacentMines }}</div>
                         </template>
                         <!-- 标记 -->
                         <div class="flag" v-if="!block.revealed && block.flagged">
-                            {{ '🚩' }}
+                            {{ "🚩" }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="footer">
-        </div>
+        <div class="footer"></div>
     </div>
 </template>
 
@@ -223,8 +216,8 @@ onMounted(() => {
 .minesweeper-container {
     height: 100%;
 
-
-    .header {}
+    .header {
+    }
 
     .content {
         .content_field {
@@ -279,6 +272,7 @@ onMounted(() => {
         }
     }
 
-    .footer {}
+    .footer {
+    }
 }
 </style>

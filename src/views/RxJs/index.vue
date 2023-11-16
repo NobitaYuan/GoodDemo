@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Observable, fromEvent, throttleTime, debounceTime, scan, from, map, filter, concat, catchError ,take} from "rxjs"
+import { Observable, fromEvent, throttleTime, debounceTime, scan, from, map, filter, concat, catchError, take } from "rxjs"
 import { onMounted, ref } from "vue"
 
 const isLoading = ref<boolean>(false)
@@ -68,9 +68,7 @@ const clickFn = () => {
     //     })
 
     fetchFn()
-        .pipe(
-            take(3),
-        )
+        .pipe(take(3))
         .subscribe({
             next: (res: any) => {
                 res.then((r: any) => {

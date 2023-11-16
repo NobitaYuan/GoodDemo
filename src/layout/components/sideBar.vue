@@ -12,10 +12,8 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 <template>
     <div class="sideBar">
-        <el-menu :default-active="$router.currentRoute.value.fullPath" class="el-menu-vertical-demo" @open="handleOpen"
-            @close="handleClose">
-            <el-menu-item class="item" @click="$router.push(item.path)" v-for="item in routerFiles" :key="item.path"
-                :index="item.path">
+        <el-menu :default-active="$router.currentRoute.value.fullPath" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+            <el-menu-item class="item" @click="$router.push(item.path)" v-for="item in routerFiles" :key="item.path" :index="item.path">
                 <template #title>
                     <el-icon><icon-menu /></el-icon>
                     <span class="span"> {{ item.name }} </span>
@@ -36,7 +34,6 @@ const handleClose = (key: string, keyPath: string[]) => {
         overflow: auto;
 
         .item {
-
             padding: 0px 16px !important;
 
             .span {
@@ -47,7 +44,6 @@ const handleClose = (key: string, keyPath: string[]) => {
                 display: inline-block;
                 width: 100%;
             }
-
         }
     }
 }
