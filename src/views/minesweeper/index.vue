@@ -99,6 +99,7 @@ const revealAll = () => {
         }
     }
 }
+
 // 翻面
 const reveal = (block: BlockState) => {
     if (isGameOver) return
