@@ -7,7 +7,7 @@ const isDev = false
 const WIDTH = 10
 const HEIGHT = 10
 // 每个格子生成雷的概率
-const mineProbability = 0.2
+const mineProbability = 0.3
 // 本次生成雷的数量
 let mineCount = 0
 // 是否开始游戏
@@ -20,9 +20,9 @@ interface BlockState {
     x: number // x坐标
     y: number // y坐标 
     revealed: boolean// 是否被翻开
-    mine?: boolean // 是否是雷
+    mine: boolean // 是否是雷
     flagged: boolean // 是否被标记
-    adjacentMines: number // 周围雷的数量
+    adjacentMines: number   // 周围雷的数量
 }
 const state = ref<BlockState[][]>([[]])
 
@@ -31,7 +31,7 @@ const generateData = () => {
     state.value = []
     state.value = Array.from({ length: HEIGHT }, (_, y) =>
         Array.from({ length: WIDTH },
-            (_, x): BlockState => ({ x, y, revealed: false, flagged: false, adjacentMines: 0 })
+            (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })
         ))
 }
 
@@ -49,6 +49,9 @@ const generateMines = (initBlock: BlockState) => {
                 mineCount++
             }
         }
+    }
+    if (mineCount === 0) {
+        generateMines(initBlock)
     }
 }
 
@@ -112,8 +115,6 @@ const reveal = (block: BlockState) => {
         updateNumbers()
     }
 
-    if (block.flagged) return
-
     // 翻面
     block.revealed = true
 
@@ -124,20 +125,16 @@ const reveal = (block: BlockState) => {
         alert('Game Over')
         return
     }
-    
+
     revealSiblings(block)
+    checkGameStatus()
 }
 // 标记
 const flagFn = (block: BlockState) => {
-    block.flagged = true
-}
-
-// 开始
-const init = () => {
-    isStart = false
-    isGameOver = false
-    mineCount = 0
-    generateData()
+    if (isGameOver) return
+    if (block.revealed) return
+    block.flagged = !block.flagged
+    checkGameStatus()
 }
 
 // 将格子周围的格子都翻开
@@ -152,6 +149,29 @@ const revealSiblings = (block: BlockState) => {
         }
     }
 }
+// 检查是否胜利
+const checkGameStatus = () => {
+    const arr = state.value.flat().filter((block) => !block.mine)
+    // 非雷的是否都翻开
+    const isWin = arr.every((block) => block.revealed)
+    // 雷的是否都标记
+    const isWin2 = state.value.flat().filter((block) => block.mine).every((block) => block.flagged)
+    if (isWin || isWin2) {
+        isGameOver = true
+        alert('You Win')
+        revealAll()
+    }
+}
+
+
+// 开始
+const init = () => {
+    isStart = false
+    isGameOver = false
+    mineCount = 0
+    generateData()
+}
+
 
 onMounted(() => {
     init()
@@ -169,13 +189,18 @@ onMounted(() => {
         </div>
         <div class="content flex-1  flex items-center">
             <!-- {{ state }} -->
-            <div class="content_field">
-                <div class="row" v-for="(row, index) in state" :key="index">
+            <div class="content_field flex flex-col">
+                <div class="row flex" v-for="(row, index) in state" :key="index">
                     <div class="col" v-for="(block, idx) in row" :key="idx" @click="reveal(block)"
                         @contextmenu.prevent="flagFn(block)">
+
                         <!-- 未翻面 -->
-                        <template v-if="!block.revealed && !isDev">
-                            <div class="mask"> </div>
+                        <template v-if="!block.revealed">
+                            <div class="mask">
+                                <template v-if="isDev">
+                                    {{ block.mine ? '💣' : block.adjacentMines }}
+                                </template>
+                            </div>
                         </template>
                         <!-- 翻面 -->
                         <template v-else>
@@ -190,8 +215,6 @@ onMounted(() => {
             </div>
         </div>
         <div class="footer">
-            <div class="timer">00:00</div>
-            <div class="mines">10</div>
         </div>
     </div>
 </template>
@@ -205,13 +228,15 @@ onMounted(() => {
 
     .content {
         .content_field {
+            gap: 2px;
+
             .row {
-                display: flex;
+                gap: 2px;
 
                 .col {
                     width: 40px;
                     height: 40px;
-                    border: 1px solid;
+                    border: 0.2px solid var(--el-color-info-dark-2);
                     text-align: center;
                     display: flex;
                     align-items: center;
@@ -219,6 +244,7 @@ onMounted(() => {
                     cursor: pointer;
                     position: relative;
                     user-select: none;
+                    border-radius: 3px;
 
                     &:hover {
                         background-color: var(--el-color-info-light-7);
@@ -231,6 +257,7 @@ onMounted(() => {
                         align-items: center;
                         justify-content: center;
                         background-color: var(--el-color-info-light-5);
+                        border-radius: 3px;
 
                         &:hover {
                             background-color: var(--el-color-info-light-7);
