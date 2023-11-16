@@ -17,6 +17,9 @@
             "path": "node_modules/cz-git"
         }
     },
+    "lint-staged": {
+        "**/*": "prettier --write --ignore-unknown"
+    },
     "dependencies": {
         "@element-plus/icons-vue": "^2.1.0",
         "@types/node": "^20.9.0",
@@ -42,6 +45,7 @@
         "eslint-plugin-promise": "^6.0.0",
         "eslint-plugin-vue": "^9.18.1",
         "husky": "^8.0.3",
+        "lint-staged": "^15.1.0",
         "postcss": "^8.4.31",
         "tailwindcss": "^3.3.5",
         "typescript": "^5.2.2",
