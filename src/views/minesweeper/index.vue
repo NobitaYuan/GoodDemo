@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="clearBomb-container">
+    <div class="minesweeper-container">
 
     </div>
 </template>

@@ -1,0 +1,29 @@
+/* 模糊背景 */
+.blur-bg {
+    background-color: rgba(235, 235, 235, 0.2);
+    backdrop-filter: saturate(50%) blur(5px);
+    -webkit-backdrop-filter: saturate(50%) blur(4px);
+}
+/* 公共的视频链接样式：links */
+.links {
+    color: #1036fb;
+    text-decoration: underline;
+    cursor: pointer;
+}
+/* 文字样式 */
+.goodFont1 {
+    background-image: linear-gradient(90deg, rgb(254, 48, 104) 1.99%, rgb(255, 44, 198) 52.5%, rgb(210, 26, 252) 101.76%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.goodFont2 {
+    background-image: linear-gradient(90deg, rgb(47, 118, 255) 0.02%, rgb(81, 193, 255) 51.05%, rgb(67, 165, 255) 93.21%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+}

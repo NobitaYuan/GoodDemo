@@ -11,9 +11,17 @@ import headCom from "./components/head.vue"
                 <headCom></headCom>
             </el-header>
             <el-container class="bd">
-                <el-aside class="aside"><sideBar /></el-aside>
+                <el-aside class="aside">
+                    <sideBar />
+                </el-aside>
                 <el-main class="main">
-                    <RouterView></RouterView>
+                    <RouterView v-slot="{ Component, route }">
+                        <transition :mode="'out-in'" enter-active-class="animate__animated animate__bounceInDown" leave-active-class="animate__animated animate__bounceOutUp">
+                            <keep-alive>
+                                <component :is="Component" :key="route.name" />
+                            </keep-alive>
+                        </transition>
+                    </RouterView>
                 </el-main>
             </el-container>
         </el-container>
@@ -27,20 +35,25 @@ import headCom from "./components/head.vue"
     background-repeat: no-repeat;
     background-size: cover;
     overflow: hidden;
+
     .common-layout-container {
         height: 100%;
         grid-gap: 10px;
         gap: 10px;
+
         .hd {
             padding: 0;
         }
+
         .bd {
             grid-gap: 10px;
             gap: 10px;
             overflow: auto;
+
             .aside {
                 width: 180px;
             }
+
             .main {
                 border-radius: 4px;
                 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
@@ -54,5 +67,9 @@ import headCom from "./components/head.vue"
             }
         }
     }
+}
+// 动画速度
+.animate__animated {
+    --animate-duration: 0.6s;
 }
 </style>

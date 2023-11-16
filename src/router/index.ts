@@ -28,9 +28,9 @@ const router = createRouter({
             },
         },
         {
-            path: "/clearBomb",
-            name: "clearBomb",
-            component: () => import("@/views/clearBomb/index.vue"),
+            path: "/minesweeper",
+            name: "minesweeper",
+            component: () => import("@/views/minesweeper/index.vue"),
             meta: {
                 title: "扫雷",
             },

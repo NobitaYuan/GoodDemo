@@ -1,1 +1,12 @@
+/* 初始化css */
 @import "./reset.css";
+
+/* 公共样式 */
+@import "./commn.css";
+
+/* animate.css */
+@import "animate.css";
+
+/* element-plus的样式 */
+@import "element-plus/dist/index.css";
+@import "element-plus/theme-chalk/dark/css-vars.css";

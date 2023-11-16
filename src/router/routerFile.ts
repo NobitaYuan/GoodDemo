@@ -12,7 +12,7 @@ export const routerFiles = [
         name: "随意生长的梅花树",
     },
     {
-        path: "/clearBomb",
+        path: "/minesweeper",
         name: "扫雷",
     },
 ]

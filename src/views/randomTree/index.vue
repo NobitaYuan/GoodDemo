@@ -11,7 +11,7 @@ const dpr = window.devicePixelRatio
 
 const cvsSize = {
     width: 1200,
-    height: 1000
+    height: 800
 }
 
 // 保证canvas的清晰度
@@ -32,7 +32,7 @@ const init = () => {
             x: cvsSize.width / 2,
             y: cvsSize.height
         },
-        length: 20,
+        length: 30,
         angle: -Math.PI / 2
     }
 
@@ -76,8 +76,8 @@ const drawTree = (startBranch: Branch, depth = 0) => {
     if (depth < 5 || Math.random() < 0.5) {
         taskArr.push(() => drawTree({
             start: endPoint,
-            length: startBranch.length + (Math.random() * 10 - 4),
-            angle: startBranch.angle - 0.4 * Math.random()
+            length: startBranch.length + (Math.random() * 10 - 5),
+            angle: startBranch.angle - 0.3 * Math.random()
         }, depth + 1))
 
     }
@@ -85,8 +85,8 @@ const drawTree = (startBranch: Branch, depth = 0) => {
         taskArr.push(() =>
             drawTree({
                 start: endPoint,
-                length: startBranch.length + (Math.random() * 10 - 4),
-                angle: startBranch.angle + 0.4 * Math.random()
+                length: startBranch.length + (Math.random() * 10 - 5),
+                angle: startBranch.angle + 0.3 * Math.random()
             }, depth + 1))
     }
 
@@ -121,6 +121,7 @@ onMounted(() => {
     <div class="random-tree-container">
         <el-button @click="init">Again</el-button>
         <canvas class="cvs" ref="el"></canvas>
+        <!-- <a class="links" target="_blank" href="https://www.bilibili.com/video/BV1wY411n7er/?spm_id_from=333.788&vd_source=1bf3969ef0357216de7b68788db486e9">@Anthony Fu</a> -->
     </div>
 </template>
 
@@ -140,6 +141,7 @@ onMounted(() => {
         height: v-bind("cvsSize.height + 'px'");
         border: solid 1px var(--el-menu-border-color);
     }
+
     color: #9fa4ae;
 }
 </style>
