@@ -8,17 +8,17 @@ const router = createRouter({
             name: "index",
             component: () => import("@/views/index/index.vue"),
             meta: {
-                title: "index",
+                title: "Nobita",
             },
         },
-        {
-            path: "/RxJs",
-            name: "RxJs",
-            component: () => import("@/views/RxJs/index.vue"),
-            meta: {
-                title: "RxJs",
-            },
-        },
+        // {
+        //     path: "/RxJs",
+        //     name: "RxJs",
+        //     component: () => import("@/views/RxJs/index.vue"),
+        //     meta: {
+        //         title: "RxJs",
+        //     },
+        // },
         {
             path: "/randomTree",
             name: "randomTree",

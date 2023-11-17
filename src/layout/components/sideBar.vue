@@ -47,4 +47,16 @@ const handleClose = (key: string, keyPath: string[]) => {
         }
     }
 }
+
+// 媒体查询，小于1000px时
+@media screen and (max-width: 1000px) {
+    .sideBar {
+        width: 100%;
+        .el-menu-vertical-demo {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+    }
+}
 </style>

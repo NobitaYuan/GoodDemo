@@ -38,7 +38,6 @@ import headCom from "./components/headView.vue"
 
     .common-layout-container {
         height: 100%;
-        grid-gap: 10px;
         gap: 10px;
 
         .hd {
@@ -73,5 +72,19 @@ import headCom from "./components/headView.vue"
 // 动画速度
 .animate__animated {
     --animate-duration: 0.6s;
+}
+
+// 媒体查询，小于1000px时
+@media screen and (max-width: 1000px) {
+    .common-layout {
+        .common-layout-container {
+            .bd {
+                flex-direction: column;
+                .aside {
+                    width: 100%;
+                }
+            }
+        }
+    }
 }
 </style>

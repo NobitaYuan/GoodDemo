@@ -1,211 +1,89 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue"
+import blockBox from "./components/MineBlock.vue"
+import { Minesweeper } from "./minesClass"
+import { VideoPlay, Refresh, Setting, Check } from "@element-plus/icons-vue"
+// 配置项
+import { isDev } from "./setting"
 
-// 是否开发模式
-const isDev = false
-// 格子的宽高
-const WIDTH = 10
-const HEIGHT = 10
-// 每个格子生成雷的概率
-const mineProbability = 0.3
-// 本次生成雷的数量
-let mineCount = 0
-// 是否开始游戏
-let isStart = false
-// 游戏是否结束
-let isGameOver = false
+const minesweeper = new Minesweeper()
 
-interface BlockState {
-    x: number // x坐标
-    y: number // y坐标
-    revealed: boolean // 是否被翻开
-    mine: boolean // 是否是雷
-    flagged: boolean // 是否被标记
-    adjacentMines: number // 周围雷的数量
+const state = minesweeper.state
+
+// 初始设置
+const settings = ref({
+    w: 10,
+    h: 10,
+    rate: 0.2,
+})
+
+const saveFn = () => {
+    minesweeper.setting(settings.value)
 }
-const state = ref<BlockState[][]>([[]])
-// 生成基本数据
-const generateData = () => {
-    state.value = []
-    state.value = Array.from({ length: HEIGHT }, (_, y) => Array.from({ length: WIDTH }, (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })))
-}
-
-// 生成雷
-const generateMines = (initBlock: BlockState) => {
-    for (const row of state.value) {
-        for (const block of row) {
-            // 初始点击的方块的四周不生成雷
-            // if (Math.abs(block.x - initBlock.x) <= 1 && Math.abs(block.y - initBlock.y) <= 1) continue
-            // 点击的方块不生成雷
-            if (block.x === initBlock.x && block.y === initBlock.y) continue
-            // 生成雷
-            if (Math.random() <= mineProbability) {
-                block.mine = true
-                mineCount++
-            }
-        }
+const reSet = () => {
+    settings.value = {
+        w: 10,
+        h: 10,
+        rate: 0.2,
     }
-    if (mineCount === 0) {
-        generateMines(initBlock)
-    }
-}
-
-// 遍历获取周围雷的数量
-const updateNumbers = () => {
-    for (const row of state.value) {
-        for (const block of row) {
-            if (block.mine) continue
-            block.adjacentMines = getAdjacentMines(block)
-        }
-    }
-}
-// 方向
-const direction = [
-    [-1, -1], // 左上
-    [0, -1], // 上
-    [1, -1], // 右上
-    [-1, 0], // 左
-    [1, 0], // 右
-    [-1, 1], // 左下
-    [0, 1], // 下
-    [1, 1], // 右下
-]
-// 获取周围雷的数量Fn
-const getAdjacentMines = (block: BlockState) => {
-    let mines = 0
-    getSiblings(block).forEach((sibling) => {
-        if (sibling.mine) mines++
-    })
-    return mines
-}
-// 获得周围的格子
-const getSiblings = (block: BlockState) => {
-    const siblings: BlockState[] = []
-    for (const [dx, dy] of direction) {
-        const x = block.x + dx
-        const y = block.y + dy
-        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) continue
-        siblings.push(state.value[y][x])
-    }
-    return siblings
-}
-
-/* ___________________________ 事件 ____________________________ */
-// 将所有的block都翻开
-const revealAll = () => {
-    for (const row of state.value) {
-        for (const block of row) {
-            block.revealed = true
-        }
-    }
-}
-
-// 翻面
-const reveal = (block: BlockState) => {
-    if (isGameOver) return
-
-    // 点击第一下后才开始生成雷
-    if (!isStart) {
-        isStart = true
-        generateMines(block)
-        updateNumbers()
-    }
-
-    // 翻面
-    block.revealed = true
-
-    // 踩雷
-    if (block.mine) {
-        revealAll()
-        isGameOver = true
-        alert("Game Over")
-        return
-    }
-
-    revealSiblings(block)
-    checkGameStatus()
-}
-// 标记
-const flagFn = (block: BlockState) => {
-    if (isGameOver) return
-    if (block.revealed) return
-    block.flagged = !block.flagged
-    checkGameStatus()
-}
-
-// 将格子周围的格子都翻开
-const revealSiblings = (block: BlockState) => {
-    const siblings = getSiblings(block)
-    for (const sibling of siblings) {
-        if (sibling.revealed) continue
-        if (sibling.mine) continue
-        sibling.revealed = true
-        if (sibling.adjacentMines === 0) {
-            revealSiblings(sibling)
-        }
-    }
-}
-// 检查是否胜利
-const checkGameStatus = () => {
-    const arr = state.value.flat().filter((block) => !block.mine)
-    // 非雷的是否都翻开
-    const isWin = arr.every((block) => block.revealed)
-    // 雷的是否都标记
-    const isWin2 = state.value
-        .flat()
-        .filter((block) => block.mine)
-        .every((block) => block.flagged)
-    if (isWin || isWin2) {
-        isGameOver = true
-        alert("You Win")
-        revealAll()
-    }
-}
-
-// 开始
-const init = () => {
-    isStart = false
-    isGameOver = false
-    mineCount = 0
-    generateData()
 }
 
 onMounted(() => {
-    init()
+    saveFn()
 })
 </script>
 
 <template>
-    <div class="minesweeper-container flex flex-col items-center gap-3">
-        <div class="header text-3xl font-bold">
-            <div class="header__title text-center mb-3">扫雷</div>
-            <div class="header__buttons">
-                <el-button @click="init" :type="'success'" class="header__button">Restart</el-button>
-                <el-button class="header__button">Settings</el-button>
+    <div class="minesweeper-container flex justify-center flex-shrink-0 gap-10 p-8">
+        <div class="left flex">
+            <div class="content_field flex flex-col gap-[12.5px]">
+                <div class="head">
+                    <div class="tips text-center select-none flex justify-between">
+                        <el-tag size="large">点击一个方块直接开始游戏</el-tag>
+                        <el-tag size="large" type="success">{{ minesweeper.timeGap }}s</el-tag>
+                    </div>
+                </div>
+                <div class="body flex flex-col gap-[2px]">
+                    <div class="row flex gap-[2px]" v-for="(row, index) in state" :key="index">
+                        <template v-for="block in row" :key="block">
+                            <blockBox :block="block" :is-dev="isDev" @flag="minesweeper.flagFn" @reveal="minesweeper.revealFn" />
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="content flex-1 flex items-center">
-            <!-- {{ state }} -->
-            <div class="content_field flex flex-col">
-                <div class="row flex" v-for="(row, index) in state" :key="index">
-                    <div class="col" v-for="(block, idx) in row" :key="idx" @click="reveal(block)" @contextmenu.prevent="flagFn(block)">
-                        <!-- 未翻面 -->
-                        <template v-if="!block.revealed">
-                            <div class="mask">
-                                <template v-if="isDev">
-                                    {{ block.mine ? "💣" : block.adjacentMines }}
-                                </template>
-                            </div>
-                        </template>
-                        <!-- 翻面 -->
-                        <template v-else>
-                            <div class="self">{{ block.mine ? "💣" : block.adjacentMines }}</div>
-                        </template>
-                        <!-- 标记 -->
-                        <div class="flag" v-if="!block.revealed && block.flagged">
-                            {{ "🚩" }}
-                        </div>
+        <div class="right min-w-[360px]">
+            <div class="header__buttons flex flex-col gap-3 h-full">
+                <div class="start-box flex justify-between">
+                    <div class="btn">
+                        <el-button @click="minesweeper.init" :icon="VideoPlay" :type="'success'">开 始</el-button>
                     </div>
+                    <div class="btn select-none flex gap-2 items-center">
+                        <div class="label text-sm" :style="{ color: 'var(--el-color-primary-light-3)' }">作弊模式</div>
+                        <el-switch inline-prompt :active-icon="Check" v-model="isDev" active-color="var(--el-color-primary)" inactive-color="var(--el-color-info-dark-2)" />
+                    </div>
+                </div>
+                <div class="settings">
+                    <el-card>
+                        <div class="slide-container flex flex-col gap-4">
+                            <div class="slide">
+                                <div class="label">列数</div>
+                                <el-slider class="elSlider" show-input :size="'small'" v-model="settings.w" :min="5" :max="100" />
+                            </div>
+                            <div class="slide">
+                                <div class="label">行数</div>
+                                <el-slider class="elSlider" show-input :size="'small'" v-model="settings.h" :min="5" :max="100" />
+                            </div>
+                            <div class="slide">
+                                <div class="label">每一格生成雷的概率</div>
+                                <el-slider class="elSlider" :step="0.1" show-input :size="'small'" v-model="settings.rate" :min="0.1" :max="0.9" />
+                            </div>
+                            <div class="btn-container flex gap3 w-full">
+                                <el-button :icon="Setting" class="flex-1" :type="'primary'" @click="saveFn">保存 & 开始</el-button>
+                                <el-button :icon="Refresh" @click="reSet">重置</el-button>
+                            </div>
+                        </div>
+                    </el-card>
                 </div>
             </div>
         </div>
@@ -215,58 +93,31 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .minesweeper-container {
-    height: 100%;
-
-    .header {
-    }
-
-    .content {
+    .left {
         .content_field {
-            gap: 2px;
+            justify-content: flex-start;
 
             .row {
-                gap: 2px;
+            }
+        }
+    }
 
-                .col {
-                    width: 40px;
-                    height: 40px;
-                    border: 0.2px solid var(--el-color-info-dark-2);
-                    text-align: center;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    position: relative;
-                    user-select: none;
-                    border-radius: 3px;
+    .right {
+        .header__buttons {
+            .btn {
+            }
 
-                    &:hover {
-                        background-color: var(--el-color-info-light-7);
-                    }
-
-                    .mask {
-                        width: 100%;
-                        height: 100%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background-color: var(--el-color-info-light-5);
-                        border-radius: 3px;
-
-                        &:hover {
-                            background-color: var(--el-color-info-light-7);
+            .settings {
+                .slide-container {
+                    .slide {
+                        .label {
+                            font-size: 12px;
+                            color: var(--el-color-info-dark-2);
                         }
-                    }
 
-                    .flag {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
+                        .elSlider {
+                            padding-left: 5px;
+                        }
                     }
                 }
             }
@@ -274,6 +125,13 @@ onMounted(() => {
     }
 
     .footer {
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .minesweeper-container {
+        flex-direction: column;
+        align-items: center;
     }
 }
 </style>

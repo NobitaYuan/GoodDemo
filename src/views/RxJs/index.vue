@@ -15,9 +15,9 @@ const url = "https://v1.hitokoto.cn/?lang=cn"
 const fetchFn = (err: boolean = true) => {
     return new Observable((subscribe) => {
         fetch(url)
-            .then((res) => {
+            .then(async (res) => {
                 if (err) {
-                    subscribe.next(res.json())
+                    subscribe.next(await res.json())
                 } else {
                     subscribe.error(res.json())
                 }
@@ -32,56 +32,28 @@ const fetchFn = (err: boolean = true) => {
     })
 }
 
+// const getAllSub = ()
+
 const clickFn = () => {
     isLoading.value = true
     // 按顺序执行这三个请求，等待前一个请求完成后再执行下一个请求
-    // concat([fetchFn(), fetchFn(false), fetchFn()]) // 将数组转换成 Observable
-    //     .pipe(
-    //         map((fn) => {
-    //             // console.log("res", res)
-    //             return fn.subscribe({
-    //                 next: (res: any) => {
-    //                     res.then((r: any) => {
-    //                         // console.log(r)
-    //                         arr.value.push(r.hitokoto + "—— " + r.from)
-    //                     })
-    //                 },
-    //                 error: (err) => {
-    //                     err.catch((err: any) => {
-    //                         catchError(err)
-    //                     })
-    //                 },
-    //             })
-    //         })
-    //     )
-    //     .subscribe({
-    //         next: (res) => {
-    //             console.log("next", res)
-    //         },
-    //         error: (err) => {
-    //             console.log("err", err)
-    //         },
-    //         complete: () => {
-    //             isLoading.value = false
-    //             console.log("complete")
-    //         },
-    //     })
-
     fetchFn()
-        .pipe(take(3))
-        .subscribe({
-            next: (res: any) => {
-                res.then((r: any) => {
-                    console.log(r)
-                    arr.value.push(r.hitokoto + "—— " + r.from)
-                })
-            },
-            complete: () => {
-                isLoading.value = false
-                console.log("complete")
-            },
-        })
+    fetchFn(false)
+    fetchFn()
 }
+
+new Observable((subscribe) => {
+    subscribe.next(1)
+    subscribe.next(2)
+    subscribe.next(3)
+    subscribe.complete()
+})
+    .pipe(
+        map((item) => {
+            return item * 2
+        }),
+    )
+    .subscribe((res) => console.log(res))
 </script>
 
 <template>
@@ -106,27 +78,32 @@ const clickFn = () => {
     justify-content: center;
     flex-direction: column;
     gap: 10px;
+
     .ul {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         gap: 8px;
+
         .li {
             background-color: var(--el-color-warning-light-8);
             display: flex;
             gap: 16px;
             justify-content: space-between;
             border: solid 1px var(--el-menu-border-color);
+
             .text {
                 padding: 8px;
                 color: var(--el-text-color-primary);
             }
+
             .del {
                 cursor: pointer;
                 background-color: var(--el-card-bg-color);
                 user-select: none;
                 padding: 8px;
                 color: var(--el-color-danger-light-3);
+
                 &:hover {
                     color: red;
                     background-color: #fff;
