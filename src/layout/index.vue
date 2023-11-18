@@ -34,7 +34,7 @@ import headCom from "./components/headView.vue"
     padding: 16px;
     background-repeat: no-repeat;
     background-size: cover;
-    overflow: hidden;
+    overflow: auto;
 
     .common-layout-container {
         height: 100%;
@@ -47,7 +47,7 @@ import headCom from "./components/headView.vue"
         .bd {
             grid-gap: 10px;
             gap: 10px;
-            overflow: auto;
+            // overflow: auto;
 
             .aside {
                 width: 180px;
@@ -58,7 +58,7 @@ import headCom from "./components/headView.vue"
                 border-radius: 4px;
                 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
                 padding: 8px;
-                min-height: 900px;
+                min-height: 768px;
                 overflow: auto;
                 background-color: var(--el-card-bg-color);
                 color: var(--el-text-color-primary);
@@ -75,11 +75,13 @@ import headCom from "./components/headView.vue"
 }
 
 // 媒体查询，小于1000px时
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .common-layout {
+        padding: 8px;
         .common-layout-container {
             .bd {
                 flex-direction: column;
+
                 .aside {
                     width: 100%;
                 }

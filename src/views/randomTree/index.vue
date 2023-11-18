@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue"
+import { Refresh } from "@element-plus/icons-vue"
 
 const el = ref<HTMLCanvasElement | null>(null)
 
@@ -10,7 +11,7 @@ const ctx = computed(() => {
 const dpr = window.devicePixelRatio
 
 const cvsSize = {
-    width: 1200,
+    width: 1000,
     height: 800,
 }
 
@@ -124,30 +125,18 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="random-tree-container">
-        <el-button @click="init">Again</el-button>
+    <div class="random-tree-container h-full flex flex-col items-center gap-2 text-#9fa4ae">
+        <el-button @click="init" :icon="Refresh" :type="'success'" plain>Generate Again</el-button>
         <canvas class="cvs" ref="el"></canvas>
-        <!-- <a class="links" target="_blank" href="https://www.bilibili.com/video/BV1wY411n7er/?spm_id_from=333.788&vd_source=1bf3969ef0357216de7b68788db486e9">@Anthony Fu</a> -->
     </div>
 </template>
 
 <style lang="less" scoped>
 .random-tree-container {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-
     .cvs {
-        // width: 90%;
-        // height: 90%;
         width: v-bind("cvsSize.width + 'px'");
         height: v-bind("cvsSize.height + 'px'");
         border: solid 1px var(--el-menu-border-color);
     }
-
-    color: #9fa4ae;
 }
 </style>

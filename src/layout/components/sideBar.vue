@@ -26,7 +26,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 <style lang="less" scoped>
 .sideBar {
     height: 100%;
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--el-box-shadow-light);
 
     .el-menu-vertical-demo {
         height: 100%;
@@ -43,15 +43,17 @@ const handleClose = (key: string, keyPath: string[]) => {
                 text-overflow: ellipsis;
                 display: inline-block;
                 width: 100%;
+                user-select: none;
             }
         }
     }
 }
 
 // 媒体查询，小于1000px时
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .sideBar {
         width: 100%;
+
         .el-menu-vertical-demo {
             width: 100%;
             display: flex;

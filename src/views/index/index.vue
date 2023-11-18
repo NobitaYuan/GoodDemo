@@ -23,7 +23,9 @@
                 <a href="https://blog.csdn.net/yuan1723936262"><img src="https://img.shields.io/badge/CSDN-论坛-c32136" /></a>&emsp;
                 <a href="https://www.zhihu.com"><img src="https://img.shields.io/badge/Zhihu-知乎-blue" /></a>&emsp;
                 <!-- visitor statistics logo 访客数统计徽标 -->
-                <img src="https://komarev.com/ghpvc/?username=NobitaYuan&label=Views&color=0e75b6&style=flat" alt="访问量统计" />
+                <a href="https://github.com/antonkomarev/github-profile-views-counter">
+                    <img src="https://komarev.com/ghpvc/?username=NobitaYuan&label=Views&color=0e75b6&style=flat" alt="访问量统计" />
+                </a>
             </div>
         </div>
         <!-- —————————————————————————————————— 分割线 —————————————————————————————————— -->
