@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import blockBox from "./components/MineBlock.vue"
 import { Minesweeper } from "./minesClass"
-import { VideoPlay, Refresh, Setting, Check } from "@element-plus/icons-vue"
+import { VideoPlay, VideoPause, Refresh, Setting, Check } from "@element-plus/icons-vue"
 // 配置项
 import { isDev } from "./setting"
 const minesweeper = new Minesweeper(10, 10, 0.2, true)
@@ -33,7 +33,7 @@ const reSet = () => {
                 <div class="head">
                     <div class="tips text-center select-none flex justify-between">
                         <el-tag size="large">点击一个方块后才会开始计时哦</el-tag>
-                        <el-tag size="large" type="success">{{ minesweeper.classState.gameTime }}s</el-tag>
+                        <el-tag size="large" :type="minesweeper.classState.gameState === 'playing' ? 'success' : 'info'">{{ minesweeper.classState.gameTime }}s</el-tag>
                     </div>
                 </div>
                 <div class="body flex flex-col gap-[2px]">
@@ -49,18 +49,18 @@ const reSet = () => {
             <div class="header__buttons flex flex-col gap-3 h-full">
                 <div class="start-box flex justify-between">
                     <div class="btn">
-                        <el-button @click="minesweeper.init" :icon="VideoPlay" :type="'success'">新一局</el-button>
+                        <el-button @click="minesweeper.init" :icon="VideoPlay" :type="'primary'" plain>新一局</el-button>
                     </div>
                     <div class="btn">
                         <template v-if="minesweeper.classState.gameState === 'playing'">
-                            <el-button @click="minesweeper.pause" :icon="VideoPlay" :type="'success'">暂 停</el-button>
+                            <el-button @click="minesweeper.pause" :icon="VideoPause" :type="'success'" plain>暂 停</el-button>
                         </template>
                         <template v-else-if="minesweeper.classState.gameState === 'pause'">
-                            <el-button @click="minesweeper.continue" :icon="VideoPlay" :type="'success'">继 续</el-button>
+                            <el-button @click="minesweeper.continue" :icon="VideoPlay" :type="'info'" plain>继 续</el-button>
                         </template>
                     </div>
                     <div class="btn select-none flex gap-2 items-center">
-                        <div class="label text-sm" :style="{ color: 'var(--el-color-primary-light-3)' }">作弊模式</div>
+                        <div class="label text-sm" :style="{ color: isDev ? 'var(--el-color-primary-light-3)' : 'var(--el-color-info-light-3)' }">作弊模式</div>
                         <el-switch inline-prompt :active-icon="Check" v-model="isDev" active-color="var(--el-color-primary)" inactive-color="var(--el-color-info-dark-2)" />
                     </div>
                 </div>
@@ -80,7 +80,7 @@ const reSet = () => {
                                 <el-slider class="elSlider" :step="0.1" show-input :size="'small'" v-model="settings.rate" :min="0.1" :max="0.9" />
                             </div>
                             <div class="btn-container flex gap3 w-full">
-                                <el-button :icon="Setting" class="flex-1" :type="'primary'" @click="saveFn">保存 & 新一局</el-button>
+                                <el-button :icon="Setting" class="flex-1" :type="'primary'" plain @click="saveFn">保存 & 新一局</el-button>
                                 <el-button :icon="Refresh" @click="reSet">重置</el-button>
                             </div>
                         </div>

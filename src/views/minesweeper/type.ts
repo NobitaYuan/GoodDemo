@@ -21,10 +21,6 @@ interface classState {
     state: BlockState[][]
     // 本次生成雷的数量
     mineCount: number
-    // 是否开始游戏
-    isStart: boolean
-    // 游戏是否结束
-    isGameOver: boolean
     // 游戏是否胜利
     isWin: boolean | null
     // 游戏状态 "init" | "playing" | "gameOver"

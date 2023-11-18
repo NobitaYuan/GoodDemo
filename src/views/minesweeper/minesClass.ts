@@ -15,10 +15,6 @@ class Minesweeper {
         state: [[]],
         // 本次生成雷的数量
         mineCount: 0,
-        // 是否开始游戏
-        isStart: false,
-        // 游戏是否结束
-        isGameOver: false,
         // 游戏是否胜利
         isWin: null,
         // 游戏状态 "init" | "playing" | "gameOver" | "pause"
