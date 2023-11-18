@@ -1,72 +1,100 @@
-import { ref, computed, onMounted } from "vue"
-import type { BlockState } from "./type"
+// vue
+import { reactive, onBeforeUnmount, onDeactivated } from "vue"
+// type
+import type { BlockState, classState } from "./type"
+// vueuse
+import { useStorage } from "@vueuse/core"
 class Minesweeper {
-    // 格子的宽高
-    WIDTH = 10
-    HEIGHT = 10
-    // 每个格子生成雷的概率
-    mineProbability = 0.2
-    // 格子的状态数据
-    state = ref<BlockState[][]>([[]])
-    // 本次生成雷的数量
-    mineCount = 0
-    // 是否开始游戏
-    isStart = false
-    // 游戏是否结束
-    isGameOver = false
-    // 游戏是否胜利
-    isWin = ref<boolean | null>(null)
-    // 时间
-    initTime = new Date("2023-11-17 15:33:23")
-    startTime = ref<Date>(this.initTime)
-    endTime = ref<Date>(this.initTime)
-    // 获得总共的秒数差
-    timeGap = computed(() => {
-        const gap = (this.endTime.value.getTime() - this.startTime.value.getTime()) / 1000
-        return Math.trunc(Math.abs(gap))
+    classState = reactive<classState>({
+        // 格子的宽高
+        WIDTH: 10,
+        HEIGHT: 10,
+        // 每个格子生成雷的概率
+        mineProbability: 0.2,
+        // 格子的状态数据
+        state: [[]],
+        // 本次生成雷的数量
+        mineCount: 0,
+        // 是否开始游戏
+        isStart: false,
+        // 游戏是否结束
+        isGameOver: false,
+        // 游戏是否胜利
+        isWin: null,
+        // 游戏状态 "init" | "playing" | "gameOver" | "pause"
+        gameState: "init",
+        // 时间
+        gameTime: 0,
+        // 计时器
+        timer: null,
+        // 是否本地存储
+        isLocal: false,
     })
-    // 计时器
-    timer: any = null
-
-    constructor(w?: number, h?: number, rate?: number) {
-        this.WIDTH = w || this.WIDTH
-        this.HEIGHT = h || this.HEIGHT
-        this.mineProbability = rate || this.mineProbability
-        this.init()
-        onMounted(() => {
-            clearInterval(this.timer)
-            this.timer = null
+    /**
+     * @description 描述
+     * @param {number} w 列数 (10)
+     * @param {number} h 行数 (10)
+     * @param {number} rate 每一格生成雷的概率 (0.2)
+     * @param {boolean} isLocal 是否数据持久化 (false)
+     * @return {Minesweeper} 返回class实例
+     */
+    constructor(w: number = 10, h: number = 10, rate: number = 0.2, isLocal: boolean = false) {
+        this.classState.WIDTH = w
+        this.classState.HEIGHT = h
+        this.classState.mineProbability = rate
+        this.classState.isLocal = isLocal
+        // 在组件卸载时或失活时，暂停游戏
+        onBeforeUnmount(() => {
+            if (this.classState.gameState === "playing") {
+                console.log("组件卸载暂停")
+                this.pause()
+            }
         })
+        onDeactivated(() => {
+            if (this.classState.gameState === "playing") {
+                console.log("组件失活暂停")
+                this.pause()
+            }
+        })
+
+        if (this.classState.isLocal) {
+            this.saveToLocal()
+        }
+        if (this.classState.gameState === "playing") {
+            this.pause()
+        }
+        if (!(this.classState.gameState === "playing" || this.classState.gameState === "pause")) {
+            this.init()
+        }
     }
     // 生成基本数据
     generateData = () => {
-        this.state.value = []
-        this.state.value = Array.from({ length: this.HEIGHT }, (_, y) =>
-            Array.from({ length: this.WIDTH }, (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })),
+        this.classState.state = Array.from({ length: this.classState.HEIGHT }, (_, y) =>
+            Array.from({ length: this.classState.WIDTH }, (_, x): BlockState => ({ x, y, revealed: false, mine: false, flagged: false, adjacentMines: 0 })),
         )
     }
     // 生成雷
     generateMines = (initBlock: BlockState) => {
-        for (const row of this.state.value) {
+        for (const row of this.classState.state) {
             for (const block of row) {
                 // 初始点击的方块的四周不生成雷
                 // if (Math.abs(block.x - initBlock.x) <= 1 && Math.abs(block.y - initBlock.y) <= 1) continue
                 // 点击的方块不生成雷
                 if (block.x === initBlock.x && block.y === initBlock.y) continue
                 // 生成雷
-                if (Math.random() <= this.mineProbability) {
+                if (Math.random() <= this.classState.mineProbability) {
                     block.mine = true
-                    this.mineCount++
+                    this.classState.mineCount++
                 }
             }
         }
-        if (this.mineCount === 0) {
+        if (this.classState.mineCount === 0) {
             this.generateMines(initBlock)
         }
     }
     // 遍历获取周围雷的数量
     updateNumbers = () => {
-        for (const row of this.state.value) {
+        for (const row of this.classState.state) {
             for (const block of row) {
                 if (block.mine) continue
                 block.adjacentMines = this.getAdjacentMines(block)
@@ -87,15 +115,15 @@ class Minesweeper {
         for (const [dx, dy] of direction) {
             const x = block.x + dx
             const y = block.y + dy
-            if (x < 0 || x >= this.WIDTH || y < 0 || y >= this.HEIGHT) continue
-            siblings.push(this.state.value[y][x])
+            if (x < 0 || x >= this.classState.WIDTH || y < 0 || y >= this.classState.HEIGHT) continue
+            siblings.push(this.classState.state[y][x])
         }
         return siblings
     }
     /* ___________________________ 事件 ____________________________ */
     // 将所有的block都翻开
     revealAll = () => {
-        for (const row of this.state.value) {
+        for (const row of this.classState.state) {
             for (const block of row) {
                 block.revealed = true
             }
@@ -103,19 +131,19 @@ class Minesweeper {
     }
     // 左键翻面
     revealFn = (block: BlockState) => {
-        if (this.isGameOver) return
-
+        if (this.classState.gameState === "gameOver") return
+        if (block.revealed) return
         // 点击第一下后才开始生成雷
-        if (!this.isStart) {
+        if (this.classState.gameState === "init") {
             // 游戏开始
             this.start(block)
         }
-
-        if (block.revealed) return
-
         // 翻面
         block.revealed = true
-
+        // 如果为暂停状态，点击后，继续游戏
+        if (this.classState.gameState === "pause") {
+            this.continue()
+        }
         // 踩雷
         if (block.mine) {
             // 游戏结束
@@ -127,18 +155,20 @@ class Minesweeper {
     }
     // 右键标记
     flagFn = (block: BlockState) => {
-        // 点击第一下后才开始生成雷
-        if (!this.isStart) {
-            this.isStart = true
-            this.generateMines(block)
-            this.updateNumbers()
-        }
-        if (this.isGameOver) return
+        if (this.classState.gameState === "gameOver") return
         if (block.revealed) return
+        // 点击第一下后才开始生成雷
+        if (this.classState.gameState === "init") {
+            // 游戏开始
+            this.start(block)
+        }
+        // 标记
         block.flagged = !block.flagged
-        // this.checkGameStatus()
+        // 如果为暂停状态，点击后，继续游戏
+        if (this.classState.gameState === "pause") {
+            this.continue()
+        }
     }
-
     // 将格子周围的格子都翻开
     revealSiblings = (block: BlockState) => {
         const siblings = this.getSiblingsWithoutMine(block)
@@ -157,24 +187,24 @@ class Minesweeper {
         for (const [dx, dy] of direction) {
             const x = block.x + dx
             const y = block.y + dy
-            if (x < 0 || x >= this.WIDTH || y < 0 || y >= this.HEIGHT) continue
+            if (x < 0 || x >= this.classState.WIDTH || y < 0 || y >= this.classState.HEIGHT) continue
             // 左上
             if (dx === -1 && dy === -1) {
-                if (this.getDirectionBlock(this.state.value[y][x], 1, 0)?.mine || this.getDirectionBlock(this.state.value[y][x], 0, -1)?.mine) continue
+                if (this.getDirectionBlock(this.classState.state[y][x], 1, 0)?.mine || this.getDirectionBlock(this.classState.state[y][x], 0, -1)?.mine) continue
             }
             // 右上
             if (dx === 1 && dy === -1) {
-                if (this.getDirectionBlock(this.state.value[y][x], -1, 0)?.mine || this.getDirectionBlock(this.state.value[y][x], 0, 1)?.mine) continue
+                if (this.getDirectionBlock(this.classState.state[y][x], -1, 0)?.mine || this.getDirectionBlock(this.classState.state[y][x], 0, 1)?.mine) continue
             }
             // 左下
             if (dx === -1 && dy === 1) {
-                if (this.getDirectionBlock(this.state.value[y][x], 0, -1)?.mine || this.getDirectionBlock(this.state.value[y][x], 1, 0)?.mine) continue
+                if (this.getDirectionBlock(this.classState.state[y][x], 0, -1)?.mine || this.getDirectionBlock(this.classState.state[y][x], 1, 0)?.mine) continue
             }
             // 右下
             if (dx === 1 && dy === 1) {
-                if (this.getDirectionBlock(this.state.value[y][x], 0, -1)?.mine || this.getDirectionBlock(this.state.value[y][x], -1, 0)?.mine) continue
+                if (this.getDirectionBlock(this.classState.state[y][x], 0, -1)?.mine || this.getDirectionBlock(this.classState.state[y][x], -1, 0)?.mine) continue
             }
-            siblings.push(this.state.value[y][x])
+            siblings.push(this.classState.state[y][x])
         }
         return siblings
     }
@@ -182,62 +212,43 @@ class Minesweeper {
     getDirectionBlock = (block: BlockState, dx: number, dy: number): BlockState | null => {
         const x = block.x + dx
         const y = block.y + dy
-        if (x < 0 || x >= this.WIDTH || y < 0 || y >= this.HEIGHT) {
+        if (x < 0 || x >= this.classState.WIDTH || y < 0 || y >= this.classState.HEIGHT) {
             return null
         }
-        return this.state.value[y][x] || null
+        return this.classState.state[y][x] || null
     }
-
     // 检查是否胜利
     checkGameStatus = () => {
-        const arr = this.state.value.flat().filter((block) => !block.mine)
+        const arr = this.classState.state.flat().filter((block) => !block.mine)
         // 非雷的是否都翻开
-        const isWin = arr.every((block) => block.revealed)
-
-        // 如果非雷的全部翻开，并且雷的是否都标记
-        // const isWin2 = this.state.value
-        //     .flat()
-        //     .filter((block) => block.mine)
-        //     .every((block) => block.flagged)
-
-        // if (isWin || isWin2) {
-        if (isWin) {
-            this.end(isWin)
+        const isWon = arr.every((block) => block.revealed)
+        if (isWon) {
+            this.end(isWon)
         }
     }
-
-    // 初始化
+    // 初始化游戏
     init = () => {
-        this.isStart = false
-        this.isGameOver = false
-        this.mineCount = 0
-        this.startTime.value = this.initTime
-        this.endTime.value = this.initTime
-        clearInterval(this.timer)
-        this.timer = null
+        this.classState.gameState = "init"
+        this.classState.mineCount = 0
+        this.classState.gameTime = 0
+        this.stopTimer()
         this.generateData()
+        console.log("init", this.classState)
     }
-
-    // 开始
+    // 开始游戏
     start = (block: BlockState) => {
-        this.isStart = true
-        const d = new Date()
-        this.startTime.value = d
-        this.endTime.value = d
+        this.classState.gameState = "playing"
         this.generateMines(block)
         this.updateNumbers()
-        this.timer = setInterval(() => {
-            this.endTime.value = new Date()
+        this.classState.timer = setInterval(() => {
+            this.classState.gameTime++
         }, 1000)
     }
-    // 结束
+    // 结束游戏
     end = (isWin: boolean) => {
-        this.isGameOver = true
-        this.isWin.value = isWin
-        if (this.timer) {
-            clearInterval(this.timer)
-            this.timer = null
-        }
+        this.classState.gameState = "gameOver"
+        this.classState.isWin = isWin
+        this.stopTimer()
         if (isWin) {
             alert("You Win!")
         } else {
@@ -245,12 +256,41 @@ class Minesweeper {
         }
         this.revealAll()
     }
+    // 暂停游戏
+    pause = () => {
+        this.classState.gameState = "pause"
+        this.stopTimer()
+    }
+    // 继续游戏
+    continue = () => {
+        this.classState.gameState = "playing"
+        this.countTime()
+    }
+    //结束计时
+    stopTimer = () => {
+        console.log("stopTimer")
+        clearInterval(this.classState.timer as number)
+        this.classState.timer = null
+    }
+    // 计时
+    countTime = () => {
+        this.stopTimer()
+        this.classState.timer = setInterval(() => {
+            this.classState.gameTime++
+        }, 1000)
+    }
+
+    // 存储至本地，并且是响应式的
+    saveToLocal = () => {
+        const localData = useStorage(localStorageKey, this.classState)
+        this.classState = localData.value
+    }
 
     // 设置
     setting = (option: { w: number; h: number; rate: number }) => {
-        this.WIDTH = option.w
-        this.HEIGHT = option.h
-        this.mineProbability = option.rate
+        this.classState.WIDTH = option.w
+        this.classState.HEIGHT = option.h
+        this.classState.mineProbability = option.rate
         this.init()
     }
 }
@@ -266,5 +306,7 @@ const direction = [
     [0, 1], // 下
     [1, 1], // 右下
 ]
+// key
+const localStorageKey = "Minesweeper-Nobita"
 
 export { Minesweeper }
