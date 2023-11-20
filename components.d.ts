@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElAside: typeof import('element-plus/es')['ElAside']
-    ElButton: typeof import('element-plus/es')['ElButton']
+    ElButton: (typeof import("element-plus/es"))["ElButton"]
     ElCard: typeof import('element-plus/es')['ElCard']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElHeader: typeof import('element-plus/es')['ElHeader']
@@ -16,10 +16,11 @@ declare module 'vue' {
     ElMain: typeof import('element-plus/es')['ElMain']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
-    ElSlider: typeof import('element-plus/es')['ElSlider']
+    ElSlider: (typeof import("element-plus/es"))["ElSlider"]
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
-    ElTag: typeof import('element-plus/es')['ElTag']
-    RandomTree: typeof import('./src/components/RandomTree.vue')['default']
+    ElTag: (typeof import("element-plus/es"))["ElTag"]
+    HTransition: typeof import('./src/components/h-transition.vue')['default']
+    RandomTree: (typeof import("./src/components/RandomTree.vue"))["default"]
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

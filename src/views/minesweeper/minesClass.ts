@@ -4,6 +4,8 @@ import { reactive, onBeforeUnmount, onDeactivated } from "vue"
 import type { BlockState, classState } from "./type"
 // vueuse
 import { useStorage } from "@vueuse/core"
+// key
+import { MinesweeperKey } from "@/key/index"
 class Minesweeper {
     classState = reactive<classState>({
         // 格子的宽高
@@ -275,7 +277,7 @@ class Minesweeper {
 
     // 存储至本地，并且是响应式的
     saveToLocal = () => {
-        const localData = useStorage(localStorageKey, this.classState)
+        const localData = useStorage(MinesweeperKey, this.classState)
         this.classState = localData.value
     }
 
@@ -299,7 +301,5 @@ const direction = [
     [0, 1], // 下
     [1, 1], // 右下
 ]
-// key
-const localStorageKey = "Minesweeper-Nobita"
 
 export { Minesweeper }

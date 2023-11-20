@@ -1,7 +1,7 @@
 import { useDraggable, useStorage } from "@vueuse/core"
 import { reactive, ref, watch } from "vue"
 import type { IDialogPosition, IOption, ReturnType } from "./type"
-const storageKey = "chatDialogPositoin"
+import { chatDialogKey } from "@/key/index"
 
 const useDialogDrag = (options: IOption): ReturnType => {
     // 弹窗大小
@@ -13,7 +13,7 @@ const useDialogDrag = (options: IOption): ReturnType => {
     })
     /* ——————————————————————拖拽逻辑——————————————————————*/
     const dialogPositon = useStorage(
-        storageKey,
+        chatDialogKey,
         reactive<IDialogPosition>({
             x: ref(initPosition().x),
             y: ref(initPosition().y),
