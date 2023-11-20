@@ -236,9 +236,7 @@ class Minesweeper {
         this.classState.gameState = "playing"
         this.generateMines(block)
         this.updateNumbers()
-        this.classState.timer = setInterval(() => {
-            this.classState.gameTime++
-        }, 1000)
+        this.countTime()
     }
     // 结束游戏
     end = (isWin: boolean) => {
@@ -264,7 +262,6 @@ class Minesweeper {
     }
     //结束计时
     stopTimer = () => {
-        console.log("stopTimer")
         clearInterval(this.classState.timer as number)
         this.classState.timer = null
     }
@@ -273,7 +270,7 @@ class Minesweeper {
         this.stopTimer()
         this.classState.timer = setInterval(() => {
             this.classState.gameTime++
-        }, 1000)
+        }, 1000) as any
     }
 
     // 存储至本地，并且是响应式的
