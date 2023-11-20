@@ -1,4 +1,4 @@
-import type { InjectionKey } from "vue"
+// import type { InjectionKey } from "vue"
 
 /* ——————————本地存储—————————— */
 
@@ -9,6 +9,6 @@ const chatDialogKey = "chatDialog-Data"
 
 /* ——————————provide-inject—————————— */
 // 聊天机器人里的折叠面板的key
-const chatCollapseKey: InjectionKey<symbol> = Symbol("chatDialog-collapseKey")
+const chatCollapseKey = "chatDialog-collapseKey"
 
 export { MinesweeperKey, chatDialogKey, chatCollapseKey }

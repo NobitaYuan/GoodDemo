@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import qAItem from "./q_a-item.vue"
-import { provide } from "vue"
-import { chatCollapseKey } from "@/key/index"
-
+import { useCollapse } from "./hook/useCollapse"
+import { onMounted } from "vue"
 interface IProps {
     title?: string
+    isOnly?: boolean
 }
 const Props = withDefaults(defineProps<IProps>(), {
     title: "您好，请选择您遇到的问题类型：",
@@ -72,6 +72,13 @@ const QAndA_arr: IQAndA[] = [
         question: [],
     },
 ]
+
+const { addCollapse } = useCollapse(Props.isOnly)
+
+onMounted(() => {
+    //  默认展开第一个
+    addCollapse("qAitem0")
+})
 </script>
 
 <template>

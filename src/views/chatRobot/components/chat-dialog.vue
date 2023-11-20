@@ -65,7 +65,7 @@ addDrag()
             </div>
             <div class="body flex-[1] px-[12px] py-[6px]">
                 <div class="min-h-[800px]">
-                    <qAndA />
+                    <qAndA :is-only="true" />
                 </div>
             </div>
             <div class="bottom h-[124px] px-[12px] py-[14px] bg-white">

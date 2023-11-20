@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import hTransition from "@/components/h-transition.vue"
 import { ArrowRight } from "@element-plus/icons-vue"
-import { inject, ref } from "vue"
+import { computed, inject } from "vue"
 import { chatCollapseKey } from "@/key/index"
-
+import type { returnType } from "./hook/type"
 interface IProps {
     title: string
     question: string[]
@@ -14,23 +14,29 @@ const Props = withDefaults(defineProps<IProps>(), {
     k: "",
 })
 
-const isActive = ref<boolean>(true)
+const { addCollapse, isActive } = inject<returnType>(chatCollapseKey)!
+
+const active = computed(() => isActive(Props.k))
+
+const clickFn = () => {
+    addCollapse(Props.k)
+}
 </script>
 
 <template>
     <div class="q_a-item-container">
-        <div class="hd">
+        <div class="hd" @click="clickFn">
             <div class="dot"></div>
             <div class="title">{{ Props.title }}</div>
-            <div class="icon">
+            <div class="icon" :class="{ isActive: active }">
                 <el-icon color="#dedede">
-                    <ArrowRight :class="{ isActive: isActive }" />
+                    <ArrowRight />
                 </el-icon>
             </div>
         </div>
-        <hTransition>
-            <div class="bd">
-                <div v-show="isActive" class="question">
+        <div class="bd">
+            <hTransition>
+                <div v-show="active" class="question">
                     <div class="question-item" v-for="(item, index) in Props.question" :key="index">
                         <div class="question-item-index">{{ index + 1 }}.</div>
                         <div class="question-item-text" :title="item">{{ item }}</div>
@@ -41,8 +47,8 @@ const isActive = ref<boolean>(true)
                         </div>
                     </div>
                 </div>
-            </div>
-        </hTransition>
+            </hTransition>
+        </div>
     </div>
 </template>
 
@@ -84,7 +90,10 @@ const isActive = ref<boolean>(true)
         }
 
         .icon {
-            .isActive {
+            transform: rotate(0deg);
+            transition: 0.1s all linear;
+
+            &.isActive {
                 transform: rotate(90deg);
             }
         }
