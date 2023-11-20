@@ -35,6 +35,14 @@ const router = createRouter({
                 title: "扫雷",
             },
         },
+        {
+            path: "/robot",
+            name: "robot",
+            component: () => import("@/views/chatRobot/index.vue"),
+            meta: {
+                title: "对话机器人",
+            },
+        },
         ...errRouter,
     ],
 })

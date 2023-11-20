@@ -15,4 +15,8 @@ export const routerFiles = [
         path: "/minesweeper",
         name: "扫雷",
     },
+    {
+        path: "/robot",
+        name: "对话机器人",
+    },
 ]
